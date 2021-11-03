@@ -61,11 +61,17 @@ addNewButton.addEventListener('click', () => {
         addNewButton.textContent = 'Cancel'
 
         document.querySelector('#submit-new-book').addEventListener('click', () => {
-            const title = document.querySelector('#title').value;
-            const author = document.querySelector('#author').value;
-            const pages = document.querySelector('#pages').value;
-            const read = document.querySelector('#read').value;
-            myLibrary.addBook(title, author, pages, read == 'on' ? true : false);
+            const title = document.querySelector('#title');
+            const author = document.querySelector('#author');
+            const pages = document.querySelector('#pages');
+            const read = document.querySelector('#read');
+            myLibrary.addBook(title.value, author.value, pages.value, read.checked);
+
+            // Reset input values
+            title.value = '';
+            author.value = '';
+            pages.value = '';
+            read.checked = false;
         })
     } else {
         document.querySelector('.addBookBanner').remove();

@@ -38,6 +38,7 @@ button {
 }
 
 .addBookBanner {
+    border-top: 1px dashed #F9FAF8;
     display: flex;
     justify-content: center;
 }
@@ -56,10 +57,6 @@ button {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-main {
-
 }
 
 footer {
