@@ -1,0 +1,45 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: #1F2937;
+    color: #F9FAF8;
+    padding: 25px;
+}
+
+main {
+
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    background-color: #1F2937;
+    color: #F9FAF8;
+    margin-top: auto;
+    height: 50px;
+}
+
+.library-shelf {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 25px;
+}
+
+.book {
+    display: flex;   
+    flex-direction: column;
+    min-width: 250px;
+    border: 1px solid #1F2937;
+    border-radius: 5px;
+    padding: 10px;
+}
