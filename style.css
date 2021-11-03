@@ -9,10 +9,53 @@ body {
     min-height: 100vh;
 }
 
-header {
+header,
+.addBookBanner {
     background-color: #1F2937;
+    width: 100%;
     color: #F9FAF8;
     padding: 25px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+header {
+    justify-content: space-between;
+}
+
+button {
+    padding: 10px;
+    background-color: #F9FAF8;
+    color: #1F2937;
+    border-radius: 5px;
+    border: 1px solid;
+}
+
+#add-new-book {
+    min-width: 150px;
+}
+
+.addBookBanner {
+    display: flex;
+    justify-content: center;
+}
+
+.addBookBanner input {
+    padding: 10px;
+    border-radius: 5px;
+    flex: 5;
+}
+
+.addBookBanner input[type="number"] {
+    flex: 1;
+}
+
+.addBookBanner div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 main {
