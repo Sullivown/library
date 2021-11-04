@@ -43,13 +43,18 @@ button {
     justify-content: center;
 }
 
-.addBookBanner input {
+.addBookBanner input,
+.addBookBanner select {
     padding: 10px;
     border-radius: 5px;
     flex: 5;
 }
 
 .addBookBanner input[type="number"] {
+    flex: 1;
+}
+
+.addBookBanner select {
     flex: 1;
 }
 
