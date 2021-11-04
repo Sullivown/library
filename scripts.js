@@ -7,7 +7,7 @@ function Library() {
     this.refreshDisplay = function() {
         shelf.innerHTML = '';
 
-        this.books.forEach((book, index) => {
+        this.books.forEach((book) => {
             createBookCard(book);
         })
     };
@@ -19,10 +19,25 @@ function Library() {
         createBookCard(newBook);
     };
 
+    // Toggle read status of book
+    this.toggleRead = function(id) {
+        this.books[id].read = !this.books[id].read;
+        const readButton = document.querySelector(`[data-bookid='${id}'] .read-button`);
+        if (this.books[id].read) {
+            readButton.classList.remove('unread');
+            readButton.classList.add('read');
+            readButton.textContent = 'Read';
+        } else {
+            readButton.classList.remove('read');
+            readButton.classList.add('unread');
+            readButton.textContent = 'Unread';
+        }
+    }
+
     // Removes book from the library and removes it from the shelf
     this.removeBook = function(id) {
         this.books.splice(id, 1);
-        document.querySelector(`[data-bookid='${id}']`).remove();
+        this.refreshDisplay();
     };
 }
 
@@ -58,7 +73,7 @@ addNewButton.addEventListener('click', () => {
             `;
 
         body.insertBefore(addBookBanner, header.nextSibling);
-        addNewButton.textContent = 'Cancel'
+        addNewButton.textContent = 'Close'
 
         document.querySelector('#submit-new-book').addEventListener('click', () => {
             const title = document.querySelector('#title');
@@ -83,15 +98,30 @@ addNewButton.addEventListener('click', () => {
 // Creates and returns a book card to display in the library shelf area
 function createBookCard(book) {
     let bookDiv = document.createElement('div');
+            const bookId = myLibrary.books.indexOf(book)
             bookDiv.classList.add('book');
-            bookDiv.dataset.bookid = myLibrary.books.indexOf(book);
+            bookDiv.dataset.bookid = bookId;
             bookDiv.innerHTML = `
             <h3>${book.title}</h3>
-            <p>by ${book.author}</p>
-            <p>Pages: ${book.pages}</p>
-            <p>${book.read ? 'Read' : 'Unread'}</p>`;
+            <div>by ${book.author}</div>
+            <div>Pages: ${book.pages}</div>
+            <div class="card-buttons-div">
+                <button class="read-button ${book.read ? 'read' : 'unread'}">${book.read ? 'Read' : 'Unread'}</button>
+                <button class="delete-button">Delete</button>
+            </div>`;
 
             shelf.append(bookDiv);
+
+            // Add event listeners for buttons
+            const delButton = document.querySelector(`[data-bookid='${bookId}'] .delete-button`);
+            delButton.addEventListener('click', () => {
+                myLibrary.removeBook(bookId);
+            })
+
+            const readButton = document.querySelector(`[data-bookid='${bookId}'] .read-button`);
+            readButton.addEventListener('click', () => {
+                myLibrary.toggleRead(bookId);
+            })
 }
 
 // Function to populate the library with data for testing
