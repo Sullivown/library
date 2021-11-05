@@ -56,6 +56,12 @@ function Library() {
         }
     }
 
+    // Edit book in the library
+    this.editBook = function(id) {
+        let bookCard = document.querySelector(`[data-bookid='${id}']`);
+        bookCard.innerHTML = addEditBookCard(id);
+    }
+
     // Removes book from the library and removes it from the shelf
     this.removeBook = function(id) {
         this.books.splice(id, 1);
@@ -83,38 +89,22 @@ const header = document.querySelector('header');
 
 // Add book button handler
 addNewButton.addEventListener('click', () => {
-    let genreOptionsArr = [];
-    for (const property in myLibrary.settings.genres) {
-        genreOptionsArr.push(`<option value="${property}">${myLibrary.settings.genres[property].name}</option>`);
-    };
+    let genreOptionsArr = generateGenreArray();
 
     if (addNewButton.textContent === 'Add New Book') {
         let addBookBanner = document.createElement('div');
         addBookBanner.classList.add('addBookBanner');
-        addBookBanner.innerHTML = `
-            <input type="text" id="title" name="title" placeholder="Title">
-            <input type="text" id="author" name="author" placeholder="Author">
-            <select id="genre" name="genre" placeholder="Total Pages">
-                <option value="">--Please choose an genre--</option>
-                ${genreOptionsArr}
-            </select>
-            <input type="number" id="pages" name="pages" placeholder="Total Pages">
-            <input type="number" id="rating" name="rating" placeholder="My Rating">
-            <div>
-                <label for="read">Read?</label><input type="checkbox" id="read" name="read">
-            </div>
-            <button id="submit-new-book">Add Book</button>
-            `;
+        addBookBanner.innerHTML = addEditBookCard();
 
         body.insertBefore(addBookBanner, header.nextSibling);
         addNewButton.textContent = 'Close'
 
-        document.querySelector('#submit-new-book').addEventListener('click', () => {
-            const title = document.querySelector('#title');
-            const author = document.querySelector('#author');
-            const genre = document.querySelector('#genre');
-            const pages = document.querySelector('#pages');
-            const read = document.querySelector('#read');
+        addBookBanner.querySelector('.save-book').addEventListener('click', () => {
+            const title = addBookBanner.querySelector('[name="title"]');
+            const author = addBookBanner.querySelector('[name="author"]');
+            const genre = addBookBanner.querySelector('[name="genre"]');
+            const pages = addBookBanner.querySelector('[name="pages"]');
+            const read = addBookBanner.querySelector('[name="read"]');
             myLibrary.addBook(title.value, author.value, genre.value, pages.value, read.checked);
 
             // Reset input values
@@ -137,14 +127,21 @@ function createBookCard(book) {
             bookDiv.classList.add('book');
             bookDiv.dataset.bookid = bookId;
             bookDiv.innerHTML = `
-            <h3>${book.title}</h3>
-            <div>by ${book.author}</div>
-            <div>Genre: ${myLibrary.settings.genres[book.genre].name}</div>
-            <div>Pages: ${book.pages}</div>
-            <div>My Rating: ${book.rating}</div>
+            <div class="card-info-div">
+                <h3>${book.title}</h3>
+                <div>by ${book.author}</div>
+                <div>Genre: ${myLibrary.settings.genres[book.genre].name}</div>
+                <div>Pages: ${book.pages}</div>
+                <div>My Rating: ${book.rating}</div>
+            </div>
             <div class="card-buttons-div">
-                <button class="read-button ${book.read ? 'read' : 'unread'}">${book.read ? 'Read' : 'Unread'}</button>
-                <button class="delete-button">Delete</button>
+                <div class="read-button-div">
+                    <button class="read-button ${book.read ? 'read' : 'unread'}">${book.read ? 'Read' : 'Unread'}</button>
+                </div>
+                <div class="control-buttons-div">
+                    <button class="edit-button">Edit</button>
+                    <button class="delete-button">Delete</button>
+                </div>
             </div>`;
 
             // Add genre colours
@@ -162,6 +159,11 @@ function createBookCard(book) {
             readButton.addEventListener('click', () => {
                 myLibrary.toggleRead(bookId);
             })
+
+            const editButton = document.querySelector(`[data-bookid='${bookId}'] .edit-button`);
+            editButton.addEventListener('click', () => {
+                myLibrary.editBook(bookId);
+            })
 }
 
 // Function to populate the library with data for testing
@@ -176,3 +178,35 @@ document.addEventListener('DOMContentLoaded', () => {
     populateTestData(5);
     myLibrary.refreshDisplay();
 })
+
+// Helper functions
+function generateGenreArray() {
+    let genreOptionsArr = [];
+    for (const property in myLibrary.settings.genres) {
+        genreOptionsArr.push(`<option value="${property}">${myLibrary.settings.genres[property].name}</option>`);
+    };
+    
+    return genreOptionsArr;
+}
+
+function addEditBookCard(id) {
+    let genreOptionsArr = generateGenreArray();
+    
+    let innerHTML = `
+        <input type="text" name="title" placeholder="Title" value="${id ? myLibrary.books[id].title : ''}">
+        <input type="text" name="author" placeholder="Author" value="${id ? myLibrary.books[id].author : ''}">
+        <select name="genre">
+            <option value="other">--Please choose an genre--</option>
+            ${genreOptionsArr}
+        </select>
+        <input type="number" name="pages" placeholder="Total Pages" value="${id ? myLibrary.books[id].pages : ''}">
+        <input type="number" name="rating" placeholder="My Rating" value="${id ? myLibrary.books[id].rating : ''}">
+        <div>
+            <label for="read">Read?</label><input type="checkbox" name="read" ${!id ? '' : myLibrary.books[id].read ? 'checked' : ''}>
+        </div>
+        <button class="save-book">Save</button>
+        ${id ? '<button id="cancel-edit">Cancel</button>' : ''}
+        `;
+
+    return innerHTML;
+}
