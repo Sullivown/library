@@ -94,7 +94,6 @@ addNewButton.addEventListener('click', () => {
         document.querySelector('.addBookBanner').remove();
         addNewButton.textContent = 'Add New Book';
     }
-
 })
 
 // Creates and returns a book card to display in the library shelf area
@@ -129,10 +128,20 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 // Helper functions
-function generateGenreArray() {
+function generateGenreArray(id) {
     let genreOptionsArr = [];
+    const isEdit = !isNaN(id);
+
+    if (!isEdit) {
+        genreOptionsArr.push('<option value="other">--Please choose a genre--</option>');
+    }
+
     for (const property in myLibrary.settings.genres) {
-        genreOptionsArr.push(`<option value="${property}">${myLibrary.settings.genres[property].name}</option>`);
+        if (isEdit && myLibrary.books[id].genre == property) {
+            genreOptionsArr.push(`<option value="${property}" selected>${myLibrary.settings.genres[property].name}</option>`);
+        } else {
+            genreOptionsArr.push(`<option value="${property}">${myLibrary.settings.genres[property].name}</option>`);
+        }
     };
     
     return genreOptionsArr;
@@ -212,13 +221,12 @@ function generateBookCardContent(book) {
 function generateAddEditBookForm(id) {
     // Returns a blank or pre-filled form depending on whether or not an ID is passed to the function
     const isEdit = !isNaN(id);
-    let genreOptionsArr = generateGenreArray();
+    let genreOptionsArr = generateGenreArray(id);
 
     return `
     <input type="text" name="title" placeholder="Title" value="${isEdit ? myLibrary.books[id].title : ''}">
     <input type="text" name="author" placeholder="Author" value="${isEdit ? myLibrary.books[id].author : ''}">
     <select name="genre">
-        <option value="other">--Please choose an genre--</option>
         ${genreOptionsArr.join('')}
     </select>
     <input type="number" name="pages" placeholder="Total Pages" value="${isEdit ? myLibrary.books[id].pages : ''}">
