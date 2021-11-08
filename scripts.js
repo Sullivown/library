@@ -58,8 +58,7 @@ function Library() {
 
     // Edit book in the library
     this.editBook = function(id) {
-        let bookCard = document.querySelector(`[data-bookid='${id}']`);
-        bookCard.innerHTML = addEditBookCard(id);
+        addEditBookCard(id);
     }
 
     // Removes book from the library and removes it from the shelf
@@ -89,30 +88,8 @@ const header = document.querySelector('header');
 
 // Add book button handler
 addNewButton.addEventListener('click', () => {
-    let genreOptionsArr = generateGenreArray();
-
     if (addNewButton.textContent === 'Add New Book') {
-        let addBookBanner = document.createElement('div');
-        addBookBanner.classList.add('addBookBanner');
-        addBookBanner.innerHTML = addEditBookCard();
-
-        body.insertBefore(addBookBanner, header.nextSibling);
-        addNewButton.textContent = 'Close'
-
-        addBookBanner.querySelector('.save-book').addEventListener('click', () => {
-            const title = addBookBanner.querySelector('[name="title"]');
-            const author = addBookBanner.querySelector('[name="author"]');
-            const genre = addBookBanner.querySelector('[name="genre"]');
-            const pages = addBookBanner.querySelector('[name="pages"]');
-            const read = addBookBanner.querySelector('[name="read"]');
-            myLibrary.addBook(title.value, author.value, genre.value, pages.value, read.checked);
-
-            // Reset input values
-            title.value = '';
-            author.value = '';
-            pages.value = '';
-            read.checked = false;
-        })
+        addEditBookCard();
     } else {
         document.querySelector('.addBookBanner').remove();
         addNewButton.textContent = 'Add New Book';
@@ -122,48 +99,20 @@ addNewButton.addEventListener('click', () => {
 
 // Creates and returns a book card to display in the library shelf area
 function createBookCard(book) {
+
+    // Create book card div
     let bookDiv = document.createElement('div');
-            const bookId = myLibrary.books.indexOf(book)
-            bookDiv.classList.add('book');
-            bookDiv.dataset.bookid = bookId;
-            bookDiv.innerHTML = `
-            <div class="card-info-div">
-                <h3>${book.title}</h3>
-                <div>by ${book.author}</div>
-                <div>Genre: ${myLibrary.settings.genres[book.genre].name}</div>
-                <div>Pages: ${book.pages}</div>
-                <div>My Rating: ${book.rating}</div>
-            </div>
-            <div class="card-buttons-div">
-                <div class="read-button-div">
-                    <button class="read-button ${book.read ? 'read' : 'unread'}">${book.read ? 'Read' : 'Unread'}</button>
-                </div>
-                <div class="control-buttons-div">
-                    <button class="edit-button">Edit</button>
-                    <button class="delete-button">Delete</button>
-                </div>
-            </div>`;
+    const bookId = myLibrary.books.indexOf(book)
+    bookDiv.classList.add('book');
+    bookDiv.dataset.bookid = bookId;
 
-            // Add genre colours
-            bookDiv.style.boxShadow = `inset 0 5px ${myLibrary.settings.genres[book.genre].color}`
+    // Create book card content
+    bookDiv.innerHTML = generateBookCardContent(book);
 
-            shelf.append(bookDiv);
+    // Add genre colours
+    bookDiv.style.boxShadow = `inset 0 5px ${myLibrary.settings.genres[book.genre].color}`
 
-            // Add event listeners for buttons
-            const delButton = document.querySelector(`[data-bookid='${bookId}'] .delete-button`);
-            delButton.addEventListener('click', () => {
-                myLibrary.removeBook(bookId);
-            })
-
-            const readButton = document.querySelector(`[data-bookid='${bookId}'] .read-button`);
-            readButton.addEventListener('click', () => {
-                myLibrary.toggleRead(bookId);
-            })
-
-            const editButton = document.querySelector(`[data-bookid='${bookId}'] .edit-button`);
-            editButton.addEventListener('click', () => {
-                myLibrary.editBook(bookId);
-            })
+    shelf.append(bookDiv);
 }
 
 // Function to populate the library with data for testing
@@ -190,23 +139,100 @@ function generateGenreArray() {
 }
 
 function addEditBookCard(id) {
-    let genreOptionsArr = generateGenreArray();
     
-    let innerHTML = `
-        <input type="text" name="title" placeholder="Title" value="${id ? myLibrary.books[id].title : ''}">
-        <input type="text" name="author" placeholder="Author" value="${id ? myLibrary.books[id].author : ''}">
-        <select name="genre">
-            <option value="other">--Please choose an genre--</option>
-            ${genreOptionsArr}
-        </select>
-        <input type="number" name="pages" placeholder="Total Pages" value="${id ? myLibrary.books[id].pages : ''}">
-        <input type="number" name="rating" placeholder="My Rating" value="${id ? myLibrary.books[id].rating : ''}">
-        <div>
-            <label for="read">Read?</label><input type="checkbox" name="read" ${!id ? '' : myLibrary.books[id].read ? 'checked' : ''}>
-        </div>
-        <button class="save-book">Save</button>
-        ${id ? '<button id="cancel-edit">Cancel</button>' : ''}
-        `;
+    let innerHTML = generateAddEditBookForm(id);
 
-    return innerHTML;
+    // Set the selector depending on Add new or Edit was clicked
+    let selector = null;
+
+    if (isNaN(id)) {
+        // If no ID - Add new was clicked
+        selector = document.createElement('div');
+        selector.classList.add('addBookBanner');
+        body.insertBefore(selector, header.nextSibling);
+        selector.innerHTML = innerHTML;
+        addNewButton.textContent = 'Close'
+    } else {
+        // Else Edit was clicked
+        selector = document.querySelector(`[data-bookid='${id}']`);
+        selector.innerHTML = innerHTML;
+    }
+
+    selector.querySelector('.save-book').addEventListener('click', () => {
+        const title = selector.querySelector('[name="title"]');
+        const author = selector.querySelector('[name="author"]');
+        const genre = selector.querySelector('[name="genre"]');
+        const pages = selector.querySelector('[name="pages"]');
+        const read = selector.querySelector('[name="read"]');
+
+        if (isNaN(id)) {
+            myLibrary.addBook(title.value, author.value, genre.value, pages.value, read.checked);
+
+            // Reset input values
+            title.value = '';
+            author.value = '';
+            pages.value = '';
+            read.checked = false;
+        } else {
+            const editBook = myLibrary.books[id];
+            editBook.title = selector.querySelector(`[name="title"]`).value;
+            editBook.author = selector.querySelector('[name="author"]').value;
+            editBook.genre = selector.querySelector('[name="genre"]').value;
+            editBook.pages = selector.querySelector('[name="pages"]').value;
+            editBook.read = selector.querySelector('[name="read"]').checked;
+
+            selector.innerHTML = generateBookCardContent(myLibrary.books[id]);
+        }
+    })
+}
+
+function generateBookCardContent(book) {
+    // Returns the book card conent of a given book object
+    const bookID = myLibrary.books.indexOf(book);
+
+    return `
+    <div class="card-info-div">
+        <h3>${book.title}</h3>
+        <div>by ${book.author}</div>
+        <div>Genre: ${myLibrary.settings.genres[book.genre].name}</div>
+        <div>Pages: ${book.pages}</div>
+        <div>My Rating: ${book.rating}</div>
+    </div>
+    <div class="card-buttons-div">
+        <div class="read-button-div">
+            <button class="read-button ${book.read ? 'read' : 'unread'}" onClick="myLibrary.toggleRead(${bookID})">${book.read ? 'Read' : 'Unread'}</button>
+        </div>
+        <div class="control-buttons-div">
+            <button class="edit-button" onClick="myLibrary.editBook(${bookID})">Edit</button>
+            <button class="delete-button" onClick="myLibrary.removeBook(${bookID})">Delete</button>
+        </div>
+    </div>`;
+}
+
+function generateAddEditBookForm(id) {
+    // Returns a blank or pre-filled form depending on whether or not an ID is passed to the function
+    const isEdit = !isNaN(id);
+    let genreOptionsArr = generateGenreArray();
+
+    return `
+    <input type="text" name="title" placeholder="Title" value="${isEdit ? myLibrary.books[id].title : ''}">
+    <input type="text" name="author" placeholder="Author" value="${isEdit ? myLibrary.books[id].author : ''}">
+    <select name="genre">
+        <option value="other">--Please choose an genre--</option>
+        ${genreOptionsArr.join('')}
+    </select>
+    <input type="number" name="pages" placeholder="Total Pages" value="${isEdit ? myLibrary.books[id].pages : ''}">
+    <input type="number" name="rating" placeholder="My Rating" value="${isEdit ? myLibrary.books[id].rating : ''}">
+    <div>
+        <label for="read">Read?</label><input type="checkbox" name="read" ${!isEdit ? '' : myLibrary.books[id].read ? 'checked' : ''}>
+    </div>
+    <button class="save-book">Save</button>
+    ${isEdit ? `<button id="cancel-edit" onClick="cancelEdit(${id})">Cancel</button>` : ''}
+    `;
+}
+
+function cancelEdit(id) {
+    // Cancels any changes made in the edit form and displays unedited book
+    const card = document.querySelector(`[data-bookid='${id}']`);
+    card.innerHTML = generateBookCardContent(myLibrary.books[id]);
 }
