@@ -35,8 +35,8 @@ function Library() {
     };
 
     // Adds book to the library and adds it to the shelf
-    this.addBook = function(title, author, genre, pages, read, rating) {
-        const newBook = new Book(title, author, genre, pages, read, rating);
+    this.addBook = function(title, author, genre, pages, rating, read) {
+        const newBook = new Book(title, author, genre, pages, rating, read);
         myLibrary.books.push(newBook);
         createBookCard(newBook);
     };
@@ -68,13 +68,13 @@ function Library() {
     };
 }
 
-function Book(title, author, genre, pages, read, rating) {
+function Book(title, author, genre, pages, rating, read) {
     this.title = title;
     this.author = author;
     this.genre = genre;
     this.pages = pages;
-    this.read = read;
     this.rating = rating;
+    this.read = read;
 }
 
 // Create the library
@@ -148,7 +148,6 @@ function generateGenreArray(id) {
 }
 
 function addEditBookCard(id) {
-    
     let innerHTML = generateAddEditBookForm(id);
 
     // Set the selector depending on Add new or Edit was clicked
@@ -173,14 +172,16 @@ function addEditBookCard(id) {
         const genre = selector.querySelector('[name="genre"]');
         const pages = selector.querySelector('[name="pages"]');
         const read = selector.querySelector('[name="read"]');
+        const rating = selector.querySelector('[name="rating"]');
 
         if (isNaN(id)) {
-            myLibrary.addBook(title.value, author.value, genre.value, pages.value, read.checked);
+            myLibrary.addBook(title.value, author.value, genre.value, pages.value, rating.value, read.checked);
 
             // Reset input values
             title.value = '';
             author.value = '';
             pages.value = '';
+            rating.value = '';
             read.checked = false;
         } else {
             const editBook = myLibrary.books[id];
@@ -188,6 +189,7 @@ function addEditBookCard(id) {
             editBook.author = selector.querySelector('[name="author"]').value;
             editBook.genre = selector.querySelector('[name="genre"]').value;
             editBook.pages = selector.querySelector('[name="pages"]').value;
+            editBook.rating = selector.querySelector('[name="rating').value;
             editBook.read = selector.querySelector('[name="read"]').checked;
 
             selector.innerHTML = generateBookCardContent(myLibrary.books[id]);
