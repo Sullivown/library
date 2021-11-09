@@ -25,6 +25,10 @@ header {
     justify-content: space-between;
 }
 
+h1 {
+    font-size: 2em;
+}
+
 button {
     padding: 10px;
     background-color: #F9FAF8;

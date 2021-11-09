@@ -264,4 +264,11 @@ function setUpLocalStorage() {
         myLibrary.books = JSON.parse(localStorage.getItem('books'));
         myLibrary.refreshDisplay();
       }
+    
+      // If no settings data, create it
+      if (!localStorage.getItem('settings')) {
+          localStorage.setItem('settings', JSON.stringify(myLibrary.settings));
+      } else {
+          myLibrary.settings = JSON.parse(localStorage.getItem('settings'));
+      }
 }
