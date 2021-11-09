@@ -120,7 +120,7 @@ function createBookCard(book) {
 // Function to populate the library with data for testing
 function populateTestData(numOfBooks) {
     for (let i = 1; i <= numOfBooks; i++) {
-       myLibrary.addBook(`Title ${i}`, `Author ${i}`, `thriller`, i * 100, i % 3 === 0 ? false : true, 5);
+       myLibrary.addBook(`Title ${i}`, `Author ${i}`, `thriller`, i * 100, 5, i % 3 === 0 ? false : true);
     }
 }
 
