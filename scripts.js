@@ -29,7 +29,7 @@ function Library() {
     this.refreshDisplay = function() {
         shelf.innerHTML = '';
 
-        this.books.forEach((book) => {
+        this.books.forEach(book => {
             createBookCard(book);
         })
     };
@@ -39,6 +39,7 @@ function Library() {
         const newBook = new Book(title, author, genre, pages, rating, read);
         myLibrary.books.push(newBook);
         createBookCard(newBook);
+        localStorage.setItem('books', JSON.stringify(myLibrary.books));
     };
 
     // Toggle read status of book
@@ -54,6 +55,7 @@ function Library() {
             readButton.classList.add('unread');
             readButton.textContent = 'Unread';
         }
+        localStorage.setItem('books', JSON.stringify(myLibrary.books));
     }
 
     // Edit book in the library
@@ -64,6 +66,7 @@ function Library() {
     // Removes book from the library and removes it from the shelf
     this.removeBook = function(id) {
         this.books.splice(id, 1);
+        localStorage.setItem('books', JSON.stringify(myLibrary.books));
         this.refreshDisplay();
     };
 }
@@ -123,8 +126,7 @@ function populateTestData(numOfBooks) {
 
 // Initialize the library
 document.addEventListener('DOMContentLoaded', () => {    
-    populateTestData(5);
-    myLibrary.refreshDisplay();
+    setUpLocalStorage();
 })
 
 // Helper functions
@@ -194,6 +196,10 @@ function addEditBookCard(id) {
 
             selector.innerHTML = generateBookCardContent(myLibrary.books[id]);
         }
+        
+        // Update local storage
+        localStorage.setItem('books', JSON.stringify(myLibrary.books));
+    
     })
 }
 
@@ -245,4 +251,17 @@ function cancelEdit(id) {
     // Cancels any changes made in the edit form and displays unedited book
     const card = document.querySelector(`[data-bookid='${id}']`);
     card.innerHTML = generateBookCardContent(myLibrary.books[id]);
+}
+
+function setUpLocalStorage() {
+    console.log(localStorage.books)
+    // If there is no books array in localStorage, create one
+    if (!localStorage.getItem('books')) {
+        localStorage.setItem('books', []);
+        populateTestData(3);
+      } else {
+        // Populate the shelf with items from the library
+        myLibrary.books = JSON.parse(localStorage.getItem('books'));
+        myLibrary.refreshDisplay();
+      }
 }
