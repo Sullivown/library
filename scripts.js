@@ -1,32 +1,34 @@
 // Constructors
-function Library() {
+class Library {
     // Tracks books currently in the library
-    this.books = [];
+    constructor() {
+        this.books = [];
 
-    this.settings = {
-        currentSort: 'default',
-        genres: {
-            other: {
-                name: 'Other',
-                color: '#000000'
-            },
-            thriller: {
-                name: 'Thriller',
-                color: '#FFC300',
-            },
-            horror: {
-                name: 'Horror',
-                color: '#581845',
-            },
-            historical: {
-                name: 'Historical',
-                color: '#AF9793',
-            },
+        this.settings = {
+            currentSort: 'default',
+            genres: {
+                other: {
+                    name: 'Other',
+                    color: '#000000'
+                },
+                thriller: {
+                    name: 'Thriller',
+                    color: '#FFC300',
+                },
+                horror: {
+                    name: 'Horror',
+                    color: '#581845',
+                },
+                historical: {
+                    name: 'Historical',
+                    color: '#AF9793',
+                },
+            }
         }
     }
 
     // Refreshes the shelf display
-    this.refreshDisplay = function() {
+    refreshDisplay = function() {
         shelf.innerHTML = '';
 
         this.books.forEach(book => {
@@ -35,7 +37,7 @@ function Library() {
     };
 
     // Adds book to the library and adds it to the shelf
-    this.addBook = function(title, author, genre, pages, rating, read) {
+    addBook = function(title, author, genre, pages, rating, read) {
         const newBook = new Book(title, author, genre, pages, rating, read);
         myLibrary.books.push(newBook);
         createBookCard(newBook);
@@ -43,7 +45,7 @@ function Library() {
     };
 
     // Toggle read status of book
-    this.toggleRead = function(id) {
+    toggleRead = function(id) {
         this.books[id].read = !this.books[id].read;
         const readButton = document.querySelector(`[data-bookid='${id}'] .read-button`);
         if (this.books[id].read) {
@@ -59,25 +61,27 @@ function Library() {
     }
 
     // Edit book in the library
-    this.editBook = function(id) {
+    editBook = function(id) {
         addEditBookCard(id);
     }
 
     // Removes book from the library and removes it from the shelf
-    this.removeBook = function(id) {
+    removeBook = function(id) {
         this.books.splice(id, 1);
         localStorage.setItem('books', JSON.stringify(myLibrary.books));
         this.refreshDisplay();
     };
 }
 
-function Book(title, author, genre, pages, rating, read) {
-    this.title = title;
-    this.author = author;
-    this.genre = genre;
-    this.pages = pages;
-    this.rating = rating;
-    this.read = read;
+class Book {
+    constructor(title, author, genre, pages, rating, read) {
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.pages = pages;
+        this.rating = rating;
+        this.read = read;
+    }
 }
 
 // Create the library
