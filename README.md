@@ -8,6 +8,7 @@ The Odin Project Library Project. [You can view it live here](https://sullivown.
 - Users can toggle the 'read/unread' status of books
 - Books on the 'shelf' are colour coded by genre
 - User libraries are stored in the localStorage
+- Responsive design. Works on desktop and mobile devices
 
 
 ## Future Updates
