@@ -1,4 +1,4 @@
-// Constructors
+// Classes
 class Library {
     // Tracks books currently in the library
     constructor() {
