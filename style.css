@@ -1,142 +1,156 @@
 * {
-    box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 body {
-    margin: 0px;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+	margin: 0px;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 }
 
 header,
 .addBookBanner {
-    background-color: #1F2937;
-    width: 100%;
-    color: #F9FAF8;
-    padding: 25px;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
+	background-color: #1f2937;
+	width: 100%;
+	color: #f9faf8;
+	padding: 25px;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 15px;
 }
 
 header {
-    justify-content: space-between;
+	justify-content: space-between;
 }
 
 h1 {
-    font-size: 2em;
+	font-size: 2em;
 }
 
 button {
-    padding: 10px;
-    background-color: #F9FAF8;
-    color: #1F2937;
-    border-radius: 5px;
-    border: 1px solid;
+	padding: 10px;
+	background-color: #f9faf8;
+	color: #1f2937;
+	border-radius: 5px;
+	border: 1px solid;
 }
 
 #add-new-book {
-    min-width: 150px;
+	min-width: 150px;
 }
 
 .addBookBanner {
-    border-top: 1px dashed #F9FAF8;
-    display: flex;
-    justify-content: center;
+	border-top: 1px dashed #f9faf8;
+	display: flex;
+	justify-content: center;
+}
+
+.addBookBanner > form {
+	display: flex;
+	flex: 1;
+	gap: 10px;
+	justify-content: center;
 }
 
 .addBookBanner input,
 .addBookBanner select {
-    padding: 10px;
-    border-radius: 5px;
-    flex: 5;
+	padding: 10px;
+	border-radius: 5px;
+	flex: 5;
+	background-color: white;
 }
 
-.addBookBanner input[type="number"] {
-    flex: 1;
+.addBookBanner input[type='number'] {
+	flex: 1;
 }
 
 .addBookBanner select {
-    flex: 1;
+	flex: 1;
 }
 
 .addBookBanner div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 footer {
-    display: flex;
-    justify-content: center;
-    background-color: #1F2937;
-    color: #F9FAF8;
-    margin-top: auto;
-    height: 50px;
+	display: flex;
+	justify-content: center;
+	background-color: #1f2937;
+	color: #f9faf8;
+	margin-top: auto;
+	height: 50px;
 }
 
 .library-shelf {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    padding: 25px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
+	padding: 25px;
 }
 
 .book {
-    display: flex;   
-    flex-direction: column;
-    min-width: 250px;
-    border: 1px solid #1F2937;
-    border-radius: 5px;
-    padding: 10px;
-    gap: 10px;
+	display: flex;
+	flex-direction: column;
+	min-width: 250px;
+	border: 1px solid #1f2937;
+	border-radius: 5px;
+	padding: 10px;
+	gap: 10px;
+}
+
+.book > form {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 
 .card-info-div {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
 }
 
 .book h3 {
-    margin-block-start: 0px;
-    margin-block-end: 0px;
+	margin-block-start: 0px;
+	margin-block-end: 0px;
 }
 
 .card-buttons-div {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
 }
 
 .read-button-div,
 .control-buttons-div {
-    display: flex;
-    width: 100%;
-    gap: 5px;
+	display: flex;
+	width: 100%;
+	gap: 5px;
 }
 
 .read-button-div button {
-    width: 100%;
+	width: 100%;
 }
 
 .read {
-    background-color: green;
-    color: #F9FAF8;
+	background-color: green;
+	color: #f9faf8;
 }
 
 .control-buttons-div button {
-    flex: 1;
+	flex: 1;
 }
 
 .delete-button {
-    background-color: red;
-    color: #F9FAF8;
+	background-color: red;
+	color: #f9faf8;
 }
 
 .edit-button {
-    background-color: rgb(43, 55, 226);
-    color: #F9FAF8;
+	background-color: rgb(43, 55, 226);
+	color: #f9faf8;
 }
