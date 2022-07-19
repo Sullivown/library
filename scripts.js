@@ -1,3 +1,17 @@
+// Firebase setup
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js';
+
+const firebaseConfig = {
+	apiKey: 'AIzaSyBQWzIoPD5o32JRj1Glo67Btw36_f0O_3k',
+	authDomain: 'library-24ce8.firebaseapp.com',
+	projectId: 'library-24ce8',
+	storageBucket: 'library-24ce8.appspot.com',
+	messagingSenderId: '395218316952',
+	appId: '1:395218316952:web:4d2da70762fd94e649aaed',
+};
+
+const app = initializeApp(firebaseConfig);
+
 // Classes
 class Library {
 	// Tracks books currently in the library
@@ -87,7 +101,8 @@ class Book {
 }
 
 // Create the library
-let myLibrary = new Library();
+window.myLibrary = new Library();
+let myLibrary = window.myLibrary;
 
 // Selectors
 const shelf = document.querySelector('.library-shelf');
@@ -189,9 +204,10 @@ function addEditBookCard(id) {
 	}
 
 	selector.querySelector('.save-book').addEventListener('click', () => {
-		const form = id
-			? document.querySelector(`[data-bookid="${id}"] > form`)
-			: document.querySelector('.addBookBanner > form');
+		const form =
+			id >= 0
+				? document.querySelector(`[data-bookid="${id}"] > form`)
+				: document.querySelector('.addBookBanner > form');
 
 		const title = selector.querySelector('[name="title"]');
 		const author = selector.querySelector('[name="author"]');
@@ -200,6 +216,9 @@ function addEditBookCard(id) {
 		const read = selector.querySelector('[name="read"]');
 		const rating = selector.querySelector('[name="rating"]');
 
+		console.log(selector);
+		console.log(id);
+		console.log(form);
 		// Validation goes here??
 		if (form.reportValidity()) {
 			if (isNaN(id)) {
@@ -310,7 +329,6 @@ function cancelEdit(id) {
 }
 
 function setUpLocalStorage() {
-	console.log(localStorage.books);
 	// If there is no books array in localStorage, create one
 	if (!localStorage.getItem('books')) {
 		localStorage.setItem('books', []);
