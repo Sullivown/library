@@ -5,7 +5,12 @@ import {
 	collection,
 	query,
 	doc,
+	addDoc,
+	getDoc,
+	setDoc,
+	deleteDoc,
 	getDocs,
+	onSnapshot,
 } from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-firestore.js';
 import {
 	getAuth,
@@ -40,6 +45,8 @@ async function signIn() {
 function authStateObserver(user) {
 	if (user) {
 		signInOutButton.textContent = 'Sign Out';
+		createLibrary();
+		loadBooks();
 	} else {
 		signInOutButton.textContent = 'Sign In';
 	}
@@ -57,15 +64,53 @@ function initFirebaseAuth() {
 	onAuthStateChanged(getAuth(), authStateObserver);
 }
 
-async function getTest(db) {
-	const testCol = collection(db, 'test');
-	const testSnapshot = await getDocs(testCol);
-	const testList = testSnapshot.docs.map((doc) => doc.data());
-	console.log(testList);
+initFirebaseAuth();
+
+// Creates a user library doc
+export async function createLibrary() {
+	const uid = getAuth().currentUser.uid;
+	const libraries = collection(db, 'libraries');
+
+	// Add a user library entry to the Firebase database.
+	try {
+		await setDoc(doc(libraries, uid), { uid });
+	} catch (error) {
+		console.error('Error writing new library to Firebase Database', error);
+	}
 }
 
-initFirebaseAuth();
-getTest(db);
+// Saves a new book to Cloud Firestore.
+export async function saveBook(bookData) {
+	const uid = getAuth().currentUser.uid;
+	const libraries = collection(db, 'libraries');
+	const userLibrary = doc(libraries, uid);
+	const books = collection(userLibrary, 'books');
+
+	// Add a new book entry to the Firebase database.
+	try {
+		await setDoc(doc(books, bookData.bookId.toString()), bookData);
+	} catch (error) {
+		console.error('Error writing new book to Firebase Database', error);
+	}
+}
+
+// Deletes a book
+export async function deleteBook(bookData) {
+	const uid = getAuth().currentUser.uid;
+	const bookRef = doc(
+		db,
+		'libraries',
+		uid,
+		'books',
+		bookData.bookId.toString()
+	);
+
+	try {
+		await deleteDoc(bookRef);
+	} catch (error) {
+		console.error('Error removing book from Firebase Database', error);
+	}
+}
 
 // Create the library
 window.myLibrary = new Library();
@@ -113,8 +158,29 @@ function populateTestData(numOfBooks) {
 
 // Initialize the library
 document.addEventListener('DOMContentLoaded', () => {
-	setUpLocalStorage();
+	// setUpLocalStorage();
 });
+
+function loadBooks() {
+	const uid = getAuth().currentUser.uid;
+	const libraries = collection(db, 'libraries');
+	const userLibrary = doc(libraries, uid);
+	const books = collection(userLibrary, 'books');
+	const booksQuery = query(books);
+
+	// Start listening to the query.
+	onSnapshot(booksQuery, function (snapshot) {
+		snapshot.docChanges().forEach(function (change) {
+			if (change.type === 'added') {
+				myLibrary.addBook(change.doc.data());
+				myLibrary.createBookCard(change.doc.data());
+			}
+			if (change.type === 'modifed') {
+				myLibrary.createBookCard(change.doc.data());
+			}
+		});
+	});
+}
 
 function setUpLocalStorage() {
 	// If there is no books array in localStorage, create one

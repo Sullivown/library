@@ -23,11 +23,10 @@ function addEditBookCard(id) {
 		// Else Edit was clicked
 		selector = document.querySelector(`[data-bookid='${id}']`);
 		selector.innerHTML = innerHTML;
+		selector.querySelector('.cancel-edit').addEventListener('click', () => {
+			cancelEdit(id);
+		});
 	}
-
-	selector.querySelector('.cancel-edit').addEventListener('click', () => {
-		cancelEdit(id);
-	});
 
 	selector.querySelector('.save-book').addEventListener('click', () => {
 		const form =
@@ -42,20 +41,17 @@ function addEditBookCard(id) {
 		const read = selector.querySelector('[name="read"]');
 		const rating = selector.querySelector('[name="rating"]');
 
-		console.log(selector);
-		console.log(id);
-		console.log(form);
 		// Validation goes here??
 		if (form.reportValidity()) {
 			if (isNaN(id)) {
-				myLibrary.addBook(
-					title.value,
-					author.value,
-					genre.value,
-					pages.value,
-					rating.value,
-					read.checked
-				);
+				myLibrary.addBook({
+					title: title.value,
+					author: author.value,
+					genre: genre.value,
+					pages: pages.value,
+					rating: rating.value,
+					read: read.checked,
+				});
 
 				// Reset input values
 				title.value = '';

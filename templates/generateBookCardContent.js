@@ -1,12 +1,12 @@
 function generateBookCardContent(book) {
 	// Returns the book card content of a given book object
-	const bookID = myLibrary.books.indexOf(book);
+	const bookGenre = book.genre.toLowerCase();
 
 	return `
     <div class="card-info-div">
         <h3>${book.title}</h3>
         <div>by ${book.author}</div>
-        <div>Genre: ${myLibrary.settings.genres[book.genre].name}</div>
+        <div>Genre: ${myLibrary.settings.genres[bookGenre].name}</div>
         <div>Pages: ${book.pages}</div>
         <div>My Rating: ${book.rating}</div>
     </div>
@@ -14,13 +14,17 @@ function generateBookCardContent(book) {
         <div class="read-button-div">
             <button class="read-button ${
 				book.read ? 'read' : 'unread'
-			}" onClick="myLibrary.toggleRead(${bookID})">${
+			}" onClick="myLibrary.toggleRead(${book.bookId})">${
 		book.read ? 'Read' : 'Unread'
 	}</button>
         </div>
         <div class="control-buttons-div">
-            <button class="edit-button" onClick="myLibrary.editBook(${bookID})">Edit</button>
-            <button class="delete-button" onClick="myLibrary.removeBook(${bookID})">Delete</button>
+            <button class="edit-button" onClick="myLibrary.editBook(${
+				book.bookId
+			})">Edit</button>
+            <button class="delete-button" onClick="myLibrary.removeBook(${
+				book.bookId
+			})">Delete</button>
         </div>
     </div>`;
 }

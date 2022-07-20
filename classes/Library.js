@@ -2,6 +2,8 @@ import Book from './Book.js';
 import generateBookCardContent from '../templates/generateBookCardContent.js';
 import addEditBookCard from '../helpers/addEditBookCard.js';
 
+import { saveBook, deleteBook } from '../scripts.js';
+
 const shelf = document.querySelector('.library-shelf');
 
 class Library {
@@ -44,9 +46,8 @@ class Library {
 		bookDiv.innerHTML = generateBookCardContent(book);
 
 		// Add genre colours
-		bookDiv.style.boxShadow = `inset 0 5px ${
-			myLibrary.settings.genres[book.genre].color
-		}`;
+		const bookGenre = book.genre.toLowerCase();
+		bookDiv.style.boxShadow = `inset 0 5px ${myLibrary.settings.genres[bookGenre].color}`;
 
 		shelf.append(bookDiv);
 	};
@@ -61,11 +62,20 @@ class Library {
 	};
 
 	// Adds book to the library and adds it to the shelf
-	addBook = function (title, author, genre, pages, rating, read) {
-		const newBook = new Book(title, author, genre, pages, rating, read);
+	addBook = function ({ bookId, title, author, genre, pages, rating, read }) {
+		const newBook = new Book(
+			bookId || Math.floor(Math.random() * 10000),
+			title,
+			author,
+			genre,
+			pages,
+			rating,
+			read
+		);
 		myLibrary.books.push(newBook);
-		createBookCard(newBook);
-		localStorage.setItem('books', JSON.stringify(myLibrary.books));
+		localStorage.setItem('books', JSON.stringify(this.books));
+		const newBookPure = Object.assign({}, newBook);
+		saveBook(newBookPure);
 	};
 
 	// Toggle read status of book
@@ -83,7 +93,7 @@ class Library {
 			readButton.classList.add('unread');
 			readButton.textContent = 'Unread';
 		}
-		localStorage.setItem('books', JSON.stringify(myLibrary.books));
+		localStorage.setItem('books', JSON.stringify(this.books));
 	};
 
 	// Edit book in the library
@@ -93,8 +103,11 @@ class Library {
 
 	// Removes book from the library and removes it from the shelf
 	removeBook = function (id) {
-		this.books.splice(id, 1);
-		localStorage.setItem('books', JSON.stringify(myLibrary.books));
+		const book = this.books.find((element) => element.bookId === id);
+		const newBooks = this.books.filter((element) => element.bookId !== id);
+		this.books = newBooks;
+		localStorage.setItem('books', JSON.stringify(this.books));
+		deleteBook(book);
 		this.refreshDisplay();
 	};
 }
