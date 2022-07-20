@@ -9,7 +9,8 @@ function generateGenreArray(id) {
 	}
 
 	for (const property in myLibrary.settings.genres) {
-		if (isEdit && myLibrary.books[id].genre == property) {
+		const book = myLibrary.books.find((element) => element.bookId === id);
+		if (isEdit && book.genre == property) {
 			genreOptionsArr.push(
 				`<option value="${property}" selected>${myLibrary.settings.genres[property].name}</option>`
 			);

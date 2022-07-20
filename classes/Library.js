@@ -38,16 +38,16 @@ class Library {
 	createBookCard = function (book) {
 		// Create book card div
 		let bookDiv = document.createElement('div');
-		const bookId = myLibrary.books.indexOf(book);
+		const bookId = this.books.indexOf(book);
 		bookDiv.classList.add('book');
-		bookDiv.dataset.bookid = bookId;
+		bookDiv.dataset.bookid = book.bookId;
 
 		// Create book card content
 		bookDiv.innerHTML = generateBookCardContent(book);
 
 		// Add genre colours
 		const bookGenre = book.genre.toLowerCase();
-		bookDiv.style.boxShadow = `inset 0 5px ${myLibrary.settings.genres[bookGenre].color}`;
+		bookDiv.style.boxShadow = `inset 0 5px ${this.settings.genres[bookGenre].color}`;
 
 		shelf.append(bookDiv);
 	};
@@ -64,7 +64,7 @@ class Library {
 	// Adds book to the library and adds it to the shelf
 	addBook = function ({ bookId, title, author, genre, pages, rating, read }) {
 		const newBook = new Book(
-			bookId || Math.floor(Math.random() * 10000),
+			bookId || Math.floor(Math.random() * 100000),
 			title,
 			author,
 			genre,
@@ -72,7 +72,7 @@ class Library {
 			rating,
 			read
 		);
-		myLibrary.books.push(newBook);
+		this.books.push(newBook);
 		localStorage.setItem('books', JSON.stringify(this.books));
 		const newBookPure = Object.assign({}, newBook);
 		saveBook(newBookPure);

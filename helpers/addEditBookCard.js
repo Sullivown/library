@@ -7,6 +7,7 @@ const header = document.querySelector('header');
 const addNewButton = document.querySelector('#add-new-book');
 
 function addEditBookCard(id) {
+	const book = myLibrary.books.find((element) => element.bookId === id);
 	let innerHTML = generateAddEditBookForm(id);
 
 	// Set the selector depending on Add new or Edit was clicked
@@ -21,7 +22,8 @@ function addEditBookCard(id) {
 		addNewButton.textContent = 'Close';
 	} else {
 		// Else Edit was clicked
-		selector = document.querySelector(`[data-bookid='${id}']`);
+		selector = document.querySelector(`[data-bookid='${book.bookId}']`);
+		console.log(selector);
 		selector.innerHTML = innerHTML;
 		selector.querySelector('.cancel-edit').addEventListener('click', () => {
 			cancelEdit(id);
@@ -31,7 +33,9 @@ function addEditBookCard(id) {
 	selector.querySelector('.save-book').addEventListener('click', () => {
 		const form =
 			id >= 0
-				? document.querySelector(`[data-bookid="${id}"] > form`)
+				? document.querySelector(
+						`[data-bookid="${book.bookId}"] > form`
+				  )
 				: document.querySelector('.addBookBanner > form');
 
 		const title = selector.querySelector('[name="title"]');
@@ -60,7 +64,7 @@ function addEditBookCard(id) {
 				rating.value = '';
 				read.checked = false;
 			} else {
-				const editBook = myLibrary.books[id];
+				const editBook = book;
 				editBook.title = selector.querySelector(`[name="title"]`).value;
 				editBook.author =
 					selector.querySelector('[name="author"]').value;
@@ -69,9 +73,7 @@ function addEditBookCard(id) {
 				editBook.rating = selector.querySelector('[name="rating').value;
 				editBook.read = selector.querySelector('[name="read"]').checked;
 
-				selector.innerHTML = generateBookCardContent(
-					myLibrary.books[id]
-				);
+				selector.innerHTML = generateBookCardContent(book);
 			}
 
 			// Update local storage
