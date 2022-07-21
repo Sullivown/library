@@ -5,11 +5,9 @@ import {
 	collection,
 	query,
 	doc,
-	addDoc,
 	getDoc,
 	setDoc,
 	deleteDoc,
-	getDocs,
 	onSnapshot,
 } from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-firestore.js';
 import {
@@ -38,8 +36,6 @@ const db = getFirestore(app);
 // Selectors
 const shelf = document.querySelector('.library-shelf');
 const addNewButton = document.querySelector('#add-new-book');
-const body = document.querySelector('body');
-const header = document.querySelector('header');
 const signInOutButton = document.querySelector('#login');
 
 // User authentication
@@ -76,6 +72,28 @@ function initFirebaseAuth() {
 }
 
 initFirebaseAuth();
+
+// Loads books from Firebase DB
+function loadBooks() {
+	const uid = getAuth().currentUser.uid;
+	const libraries = collection(db, 'libraries');
+	const userLibrary = doc(libraries, uid);
+	const books = collection(userLibrary, 'books');
+	const booksQuery = query(books);
+
+	// Start listening to the query.
+	onSnapshot(booksQuery, function (snapshot) {
+		snapshot.docChanges().forEach(function (change) {
+			if (change.type === 'added') {
+				myLibrary.addBook(change.doc.data());
+				myLibrary.createBookCard(change.doc.data());
+			}
+			if (change.type === 'modifed') {
+				myLibrary.createBookCard(change.doc.data());
+			}
+		});
+	});
+}
 
 // Creates a user library doc
 export async function createLibrary() {
@@ -171,24 +189,3 @@ signInOutButton.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
 	// setUpLocalStorage();
 });
-
-function loadBooks() {
-	const uid = getAuth().currentUser.uid;
-	const libraries = collection(db, 'libraries');
-	const userLibrary = doc(libraries, uid);
-	const books = collection(userLibrary, 'books');
-	const booksQuery = query(books);
-
-	// Start listening to the query.
-	onSnapshot(booksQuery, function (snapshot) {
-		snapshot.docChanges().forEach(function (change) {
-			if (change.type === 'added') {
-				myLibrary.addBook(change.doc.data());
-				myLibrary.createBookCard(change.doc.data());
-			}
-			if (change.type === 'modifed') {
-				myLibrary.createBookCard(change.doc.data());
-			}
-		});
-	});
-}

@@ -79,7 +79,6 @@ class Library {
 
 	// Toggle read status of book
 	toggleRead = function (id) {
-		console.log(this.books);
 		// update book object for Firebase entry
 		let bookData = this.books.find((element) => element.bookId === id);
 		bookData = { ...bookData, read: !bookData.read };
