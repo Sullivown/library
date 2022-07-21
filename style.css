@@ -42,16 +42,18 @@ button {
 }
 
 .addBookBanner {
+	display: block;
 	border-top: 1px dashed #f9faf8;
-	display: flex;
 	justify-content: center;
+	max-width: 100vw;
 }
 
 .addBookBanner > form {
 	display: flex;
-	flex: 1;
+	flex-direction: row;
 	gap: 10px;
 	justify-content: center;
+	flex-wrap: wrap;
 }
 
 .addBookBanner input,
