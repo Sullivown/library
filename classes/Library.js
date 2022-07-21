@@ -2,7 +2,7 @@ import Book from './Book.js';
 import generateBookCardContent from '../templates/generateBookCardContent.js';
 import addEditBookCard from '../helpers/addEditBookCard.js';
 
-import { saveBook, deleteBook } from '../scripts.js';
+import { saveBook, editBook as editBookFB, deleteBook } from '../scripts.js';
 
 const shelf = document.querySelector('.library-shelf');
 
@@ -73,18 +73,38 @@ class Library {
 			read
 		);
 		this.books.push(newBook);
-		localStorage.setItem('books', JSON.stringify(this.books));
 		const newBookPure = Object.assign({}, newBook);
 		saveBook(newBookPure);
 	};
 
 	// Toggle read status of book
 	toggleRead = function (id) {
-		this.books[id].read = !this.books[id].read;
+		console.log(this.books);
+		// update book object for Firebase entry
+		let bookData = this.books.find((element) => element.bookId === id);
+		bookData = { ...bookData, read: !bookData.read };
+
+		// Update the books array in myLibrary
+		this.books = this.books.map((book) => {
+			if (book.bookId === id) {
+				return new Book(
+					book.bookId,
+					book.title,
+					book.author,
+					book.genre,
+					book.pages,
+					book.rating,
+					!book.read
+				);
+			} else {
+				return book;
+			}
+		});
+
 		const readButton = document.querySelector(
 			`[data-bookid='${id}'] .read-button`
 		);
-		if (this.books[id].read) {
+		if (bookData.read) {
 			readButton.classList.remove('unread');
 			readButton.classList.add('read');
 			readButton.textContent = 'Read';
@@ -93,7 +113,8 @@ class Library {
 			readButton.classList.add('unread');
 			readButton.textContent = 'Unread';
 		}
-		localStorage.setItem('books', JSON.stringify(this.books));
+
+		editBookFB(bookData);
 	};
 
 	// Edit book in the library
@@ -106,7 +127,6 @@ class Library {
 		const book = this.books.find((element) => element.bookId === id);
 		const newBooks = this.books.filter((element) => element.bookId !== id);
 		this.books = newBooks;
-		localStorage.setItem('books', JSON.stringify(this.books));
 		deleteBook(book);
 		this.refreshDisplay();
 	};

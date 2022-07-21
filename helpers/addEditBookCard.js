@@ -1,6 +1,7 @@
 import generateAddEditBookForm from '../templates/generateAddEditBookForm.js';
 import generateBookCardContent from '../templates/generateBookCardContent.js';
 import cancelEdit from '../helpers/cancelEdit.js';
+import { editBook } from '../scripts.js';
 
 const body = document.querySelector('body');
 const header = document.querySelector('header');
@@ -23,7 +24,6 @@ function addEditBookCard(id) {
 	} else {
 		// Else Edit was clicked
 		selector = document.querySelector(`[data-bookid='${book.bookId}']`);
-		console.log(selector);
 		selector.innerHTML = innerHTML;
 		selector.querySelector('.cancel-edit').addEventListener('click', () => {
 			cancelEdit(id);
@@ -45,7 +45,7 @@ function addEditBookCard(id) {
 		const read = selector.querySelector('[name="read"]');
 		const rating = selector.querySelector('[name="rating"]');
 
-		// Validation goes here??
+		// Form validation
 		if (form.reportValidity()) {
 			if (isNaN(id)) {
 				myLibrary.addBook({
@@ -64,20 +64,23 @@ function addEditBookCard(id) {
 				rating.value = '';
 				read.checked = false;
 			} else {
-				const editBook = book;
-				editBook.title = selector.querySelector(`[name="title"]`).value;
-				editBook.author =
+				const editedBook = book;
+				editedBook.title =
+					selector.querySelector(`[name="title"]`).value;
+				editedBook.author =
 					selector.querySelector('[name="author"]').value;
-				editBook.genre = selector.querySelector('[name="genre"]').value;
-				editBook.pages = selector.querySelector('[name="pages"]').value;
-				editBook.rating = selector.querySelector('[name="rating').value;
-				editBook.read = selector.querySelector('[name="read"]').checked;
+				editedBook.genre =
+					selector.querySelector('[name="genre"]').value;
+				editedBook.pages =
+					selector.querySelector('[name="pages"]').value;
+				editedBook.rating =
+					selector.querySelector('[name="rating').value;
+				editedBook.read =
+					selector.querySelector('[name="read"]').checked;
 
+				editBook(editedBook);
 				selector.innerHTML = generateBookCardContent(book);
 			}
-
-			// Update local storage
-			localStorage.setItem('books', JSON.stringify(myLibrary.books));
 		}
 	});
 }

@@ -35,6 +35,13 @@ import addEditBookCard from './helpers/addEditBookCard.js';
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Selectors
+const shelf = document.querySelector('.library-shelf');
+const addNewButton = document.querySelector('#add-new-book');
+const body = document.querySelector('body');
+const header = document.querySelector('header');
+const signInOutButton = document.querySelector('#login');
+
 // User authentication
 async function signIn() {
 	// Sign in Firebase using popup auth and Google as the identity provider.
@@ -45,10 +52,14 @@ async function signIn() {
 function authStateObserver(user) {
 	if (user) {
 		signInOutButton.textContent = 'Sign Out';
+		addNewButton.removeAttribute('hidden');
+		shelf.innerHTML = '';
 		createLibrary();
 		loadBooks();
 	} else {
+		shelf.innerHTML = 'Sign in to add books';
 		signInOutButton.textContent = 'Sign In';
+		addNewButton.setAttribute('hidden', true);
 	}
 }
 
@@ -94,6 +105,27 @@ export async function saveBook(bookData) {
 	}
 }
 
+// Edits a book
+export async function editBook(bookData) {
+	const uid = getAuth().currentUser.uid;
+
+	const docRef = doc(
+		db,
+		`libraries/${uid}/books`,
+		bookData.bookId.toString()
+	);
+	const docSnap = await getDoc(docRef);
+
+	if (docSnap.exists()) {
+		await setDoc(
+			doc(db, `libraries/${uid}/books`, bookData.bookId.toString()),
+			Object.assign({}, bookData)
+		);
+	} else {
+		console.error('No such document!');
+	}
+}
+
 // Deletes a book
 export async function deleteBook(bookData) {
 	const uid = getAuth().currentUser.uid;
@@ -116,13 +148,6 @@ export async function deleteBook(bookData) {
 window.myLibrary = new Library();
 let myLibrary = window.myLibrary;
 
-// Selectors
-const shelf = document.querySelector('.library-shelf');
-const addNewButton = document.querySelector('#add-new-book');
-const body = document.querySelector('body');
-const header = document.querySelector('header');
-const signInOutButton = document.querySelector('#login');
-
 // Add book button handler
 addNewButton.addEventListener('click', () => {
 	if (addNewButton.textContent === 'Add New Book') {
@@ -141,20 +166,6 @@ signInOutButton.addEventListener('click', () => {
 		signIn();
 	}
 });
-
-// Function to populate the library with data for testing
-function populateTestData(numOfBooks) {
-	for (let i = 1; i <= numOfBooks; i++) {
-		myLibrary.addBook(
-			`Title ${i}`,
-			`Author ${i}`,
-			`thriller`,
-			i * 100,
-			5,
-			i % 3 === 0 ? false : true
-		);
-	}
-}
 
 // Initialize the library
 document.addEventListener('DOMContentLoaded', () => {
@@ -180,23 +191,4 @@ function loadBooks() {
 			}
 		});
 	});
-}
-
-function setUpLocalStorage() {
-	// If there is no books array in localStorage, create one
-	if (!localStorage.getItem('books')) {
-		localStorage.setItem('books', []);
-		populateTestData(3);
-	} else {
-		// Populate the shelf with items from the library
-		myLibrary.books = JSON.parse(localStorage.getItem('books'));
-		myLibrary.refreshDisplay();
-	}
-
-	// If no settings data, create it
-	if (!localStorage.getItem('settings')) {
-		localStorage.setItem('settings', JSON.stringify(myLibrary.settings));
-	} else {
-		myLibrary.settings = JSON.parse(localStorage.getItem('settings'));
-	}
 }
